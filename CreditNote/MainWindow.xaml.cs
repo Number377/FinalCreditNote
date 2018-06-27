@@ -113,6 +113,10 @@ namespace CreditNote
             {
                 MessageBox.Show("您的花費已經超過這禮拜的預算了");
             }
+            else if(Finaltotal == 0)
+            {
+                MessageBox.Show("您這禮拜的預算已經花玩了");
+            }
         }
 
         private void calculate_Click(object sender, RoutedEventArgs e)
