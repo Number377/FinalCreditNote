@@ -20,6 +20,9 @@ namespace CreditNote
     /// </summary>
     public partial class MainWindow : Window
     {
+        int Finaltotal = 0;
+        int Total = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -77,7 +80,7 @@ namespace CreditNote
             // 就算沒有檔案也可以正常開啟
             try
             {
-                // 開檔(預設為D:\data.txt)
+                // 開檔(預設為C:\test\data.txt)
                 string[] lines = System.IO.File.ReadAllLines(@"C:\test\data.txt");
 
                 // 解析每一行
@@ -101,41 +104,54 @@ namespace CreditNote
             }
             catch { }
             count();
+            Finaltotal = int.Parse(Budgettext.Text) - Total;
+            if((float)Finaltotal <= (float.Parse(Budgettext.Text) * 0.1) && Finaltotal > 0)
+            {
+                MessageBox.Show("您這禮拜的花費已快達到預算了");
+            }
+            else if(Finaltotal < 0)
+            {
+                MessageBox.Show("您的花費已經超過這禮拜的預算了");
+            }
         }
 
         private void calculate_Click(object sender, RoutedEventArgs e)
         {
-            int Finaltotal = 0;
-            int Total = 0;
             foreach (TodoItem item in TotoItemList.Children)
             {
-                try
+                if (int.Parse(Budgettext.Text) >= 0)
                 {
-                    Total += int.Parse(item.Money.Text);
-                    Totalmoney.Text = Total.ToString();
-                    Finaltotal = int.Parse(Budgettext.Text) - Total;
-                    if (Finaltotal > 0)
+                    try
                     {
-                        MessageBox.Show("目前為止的花費未超過預算 還剩下 : " + Finaltotal.ToString() + "元");
+                        Total += int.Parse(item.Money.Text);
+                        Totalmoney.Text = Total.ToString();
+                        Finaltotal = int.Parse(Budgettext.Text) - Total;
+                        if (Finaltotal > 0)
+                        {
+                            MessageBox.Show("目前為止的花費未超過預算 還剩下 : " + Finaltotal.ToString() + "元");
+                        }
+                        else if (Finaltotal == 0)
+                        {
+                            MessageBox.Show("目前為止的花費與預算打平");
+                        }
+                        else
+                        {
+                            MessageBox.Show("目前尾指的花費已超過預算 超過" + (-1 * Finaltotal).ToString() + "元");
+                        }
                     }
-                    else if (Finaltotal == 0)
+                    catch
                     {
-                        MessageBox.Show("目前為止的花費與預算打平");
-                    }
-                    else
-                    {
-                        MessageBox.Show("目前尾指的花費已超過預算 超過" + (-1 * Finaltotal).ToString() + "元");
+                        MessageBox.Show("麻煩請輸入正確的價格和預算(整數數字)");
                     }
                 }
-                catch
+                else if(int.Parse(Budgettext.Text) < 0)
                 {
-                    MessageBox.Show("麻煩請輸入正確的價格和預算(整數數字)");
+                    MessageBox.Show("沒有預算是負的吧!?");
                 }
             }
         }
         void count()
         {
-            int Total = 0;
             foreach (TodoItem item in TotoItemList.Children)
             {
                 try
